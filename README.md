@@ -1,5 +1,4 @@
-# CIS-566-Project-0
-https://github.com/CIS-566-2018/CIS-566-Project-0
+# CIS 566 Homework 0
 
 ## Objective
 - Check that the tools and build configuration we will be using for the class works.
