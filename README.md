@@ -1,4 +1,4 @@
-# CIS 566 Homework 0
+# CIS 566 Homework 0: Intro to Javascript and WebGL
 
 ## Objective
 - Check that the tools and build configuration we will be using for the class works.
