@@ -30,7 +30,7 @@ void main()
         vec3 c = vec3(1.0, 1.0, 1.0);
         vec3 d = vec3(0.0, 0.33, 0.67);
        // Material base color (before shading)
-        vec4 diffuseColor = u_Color;
+        // vec4 diffuseColor = u_Color;
 
         // Calculate the diffuse term for Lambert shading
         float diffuseTerm = dot(normalize(fs_Nor), normalize(fs_LightVec));
@@ -44,8 +44,8 @@ void main()
                                                             //lit by our point light are not completely black.
 
         // Compute final shaded color
-
-        out_Col = vec4(diffuseColor.rgb * lightIntensity, diffuseColor.a);
+        vec3 col =  a + b * cos(2.0 * 3.1415926 * (c * lightIntensity + d));
+        out_Col =vec4(col.rgb, 1);
 
 
 }
