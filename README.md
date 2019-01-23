@@ -1,5 +1,9 @@
 # CIS 566 Homework 0: Intro to Javascript and WebGL
 
+## Demo link
+
+- Demo link: https://junweih.github.io/hw0-intro-to-javascript-and-webgl-junweih/
+
 ## Objective
 - Check that the tools and build configuration we will be using for the class works.
 - Start learning Typescript and WebGL2
