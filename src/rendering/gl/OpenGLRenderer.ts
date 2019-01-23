@@ -6,6 +6,7 @@ import ShaderProgram from './ShaderProgram';
 
 // In this file, `gl` is accessible because it is imported above
 class OpenGLRenderer {
+
   constructor(public canvas: HTMLCanvasElement) {
   }
 
@@ -17,6 +18,7 @@ class OpenGLRenderer {
     this.canvas.width = width;
     this.canvas.height = height;
   }
+
 
   clear() {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -32,7 +34,6 @@ class OpenGLRenderer {
     prog.setModelMatrix(model);
     prog.setViewProjMatrix(viewProj);
     // prog.setGeometryColor(color);
-
     for (let drawable of drawables) {
       prog.draw(drawable);
     }

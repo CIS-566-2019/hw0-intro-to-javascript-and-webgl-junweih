@@ -16,12 +16,14 @@ const controls = {
   'Load Scene': loadScene, // A function pointer, essentially
   Color: [200.0, 150.0, 120.0],
   Shaders: 'Lambert',
+  Shapes: 'cube',
 };
 
 let icosphere: Icosphere;
 let square: Square;
 let cube: Cube;
 let prevTesselations: number = 5;
+let currentTime: number = 0.0;
 
 function loadScene() {
   icosphere = new Icosphere(vec3.fromValues(0, 0, 0), 1, controls.tesselations);
@@ -45,9 +47,12 @@ function main() {
   // Add controls to the gui
   const gui = new DAT.GUI();
   gui.add(controls, 'tesselations', 0, 8).step(1);
-  gui.add(controls, 'Load Scene');
-  gui.addColor(controls, 'Color').onChange(setColor);
+  gui.addColor(controls, 'Color').onChange(setColor); 
   gui.add(controls, 'Shaders', ['Lambert', 'Deform']);
+  gui.add(controls, 'Shapes', ['cube', 'icosphere', 'square']);
+
+
+
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement> document.getElementById('canvas');
@@ -78,7 +83,12 @@ function main() {
     new Shader(gl.VERTEX_SHADER, require('./shaders/deform-vert.glsl')),
     new Shader(gl.FRAGMENT_SHADER, require('./shaders/deform-frag.glsl')),
   ]);
-  deform.setGeometryColor(vec4.fromValues(100.0 / 255.0, 250.0 / 255.0, 120.0 / 255.0, 1.0));
+
+  // const cubeOfCube = new ShaderProgram([
+  //   new Shader(gl.VERTEX_SHADER, require('./shaders/CubeOfCube-vert.glsl')),
+  //   new Shader(gl.FRAGMENT_SHADER, require('./shaders/CubeOfCube-frag.glsl')),
+  // ]);
+  // cubeOfCube.setGeometryColor(vec4.fromValues(100.0 / 255.0, 250.0 / 255.0, 120.0 / 255.0, 1.0));
 
   // This function will be called every frame
   function tick() {
@@ -87,19 +97,54 @@ function main() {
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
     renderer.clear();
     if (controls.Shaders == 'Lambert') {
-      renderer.render(camera, lambert, [
-        //icosphere,
-        // square,
-        cube,
-      ]);
+      switch (controls.Shapes){
+        case 'icosphere':
+          renderer.render(camera, lambert, [icosphere,]);  
+          break;
+
+        case 'cube':
+          renderer.render(camera, lambert, [cube,]);  
+          break;
+
+        case 'square':
+          renderer.render(camera, lambert, [square,]);  
+          break;
+      }
     }
     else if (controls.Shaders == 'Deform') {
-      renderer.render(camera, deform, [
-        icosphere,
-        // square,
-        // cube,
-      ]);
+      switch (controls.Shapes){
+        case 'icosphere':
+          renderer.render(camera, deform, [icosphere,]);  
+          break;
+
+        case 'cube':
+          renderer.render(camera, deform, [cube,]);  
+          break;
+
+        case 'square':
+          renderer.render(camera, deform, [square,]);  
+          break;
+      }
+      deform.setTime(currentTime);
     }
+    // else if (controls.Shaders == 'Cube_of_Cube') {
+    //   console.log('Cube of Cube shader works');
+    //   switch (controls.Shapes){
+    //     case 'icosphere':
+    //       renderer.render(camera, cubeOfCube, [icosphere,]);  
+    //       break;
+
+    //     case 'cube':
+    //       renderer.render(camera, cubeOfCube, [cube,]);  
+    //       break;
+
+    //     case 'square':
+    //       renderer.render(camera, cubeOfCube, [square,]);  
+    //       break;
+    //   }
+    //   cubeOfCube.setTime(currentTime);
+    // }
+ 
     if(controls.tesselations != prevTesselations)
     {
       prevTesselations = controls.tesselations;
@@ -107,6 +152,7 @@ function main() {
       icosphere.create();
     }
 
+    currentTime++;
 
     stats.end();
 

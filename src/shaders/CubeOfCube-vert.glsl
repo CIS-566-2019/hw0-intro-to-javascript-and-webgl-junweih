@@ -28,24 +28,7 @@ in vec4 vs_Nor;             // The array of vertex normals passed to the shader
 in vec4 vs_Col;             // The array of vertex colors passed to the shader.
 
 out vec4 fs_Nor;            // The array of normals that has been transformed by u_ModelInvTr. This is implicitly passed to the fragment shader.
-out vec4 fs_LightVec;       // The direction in which our virtual light lies, relative to each vertex. This is implicitly passed to the fragment shader.
 out vec4 fs_Col;            // The color of each vertex. This is implicitly passed to the fragment shader.
-
-const vec4 lightPos = vec4(5, 5, 3, 1); //The position of our virtual light, which is used to compute the shading of
-                                        //the geometry in the fragment shader.
-
-vec2 random2( vec2 p) {
-    return fract(sin(vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)))) * 43758.5453);
-}
-
-vec4 myRotate(vec4 pos, float time) {
-    mat4 m = mat4(vec4(cos(time/16.0), sin(time/16.0),0,0),
-                  vec4(-sin(time/16.0), cos(time/16.0), 0,0),
-                  vec4(0,0,1,0),
-                  vec4(0,0,0,1));
-    return m * pos;
-}
-
 
 void main()
 {
@@ -57,27 +40,22 @@ void main()
                                                             // model matrix. This is necessary to ensure the normals remain
                                                             // perpendicular to the surface after the surface is transformed by
                                                             // the model matrix.
+
+    float animTime = mod(u_Time, 100.0);
+    float xScale = 0.0;
+    if (vs_Pos.x > 0.0) {
+        xScale= smoothstep(10.0, 15.0, animTime);  
+    }
+
+    // float zScale = smoothstep(20.0, 25.0, animTime) - smoothstep(70.0, 75.0, animTime);
+    // float yScale = smoothstep(30.0, 35.0, animTime) - smoothstep(80.0, 85.0, animTime);
     
-    float animTime = mod(u_Time, 1000.0) / 1000.0;
+    vec4 tmp_Pos = vec4(vs_Pos.rgb + xScale, 1);
 
-    float random = random2(vec2(u_Time, u_Time+1.0)).x * 0.2 + 1.5;
-
-    vec4 startPosition = vec4(random *  normalize(vec3(vs_Pos.x, vs_Pos.y, vs_Pos.z)), 1);
     
-    vec4 rotatePos = mix(myRotate(vs_Pos, u_Time), vs_Pos,  clamp(cos(2.0 * 3.14159 * u_Time * 0.001),0.0, 1.0));
 
-
-
-    // vec4 combinePos = mix(vs_Pos, rotatePos,  clamp(cos(2.0 * 3.14159 * u_Time * 0.01),0.0, 1.0));
-
-    vec4 combinePos = mix(rotatePos, startPosition,  clamp(cos(2.0 * 3.14159 * u_Time * 0.005),0.0, 1.0));
-
-
-    vec4 modelposition = u_Model * combinePos;
-
-    // vec4 modelposition = u_Model * vs_Pos;   // Temporarily store the transformed vertex positions for use below
-
-    fs_LightVec = lightPos - modelposition;  // Compute the direction in which the light source lies
+ 
+    vec4 modelposition = u_Model * tmp_Pos;   // Temporarily store the transformed vertex positions for use below
 
     gl_Position = u_ViewProj * modelposition;// gl_Position is a built-in variable of OpenGL which is
                                              // used to render the final positions of the geometry's vertices
